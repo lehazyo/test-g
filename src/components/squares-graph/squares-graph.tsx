@@ -83,6 +83,6 @@ export const SquaresGraph: FC<SquaresGraphProps> = ({
   }, [cellSize, widthPx, heightPx, waterSandArray]);
 
   return (
-    <canvas width={widthPx} height={heightPx} ref={canvasRef}></canvas>
-  )
+    <canvas className="squares-graph" width={widthPx} height={heightPx} ref={canvasRef}></canvas>
+  );
 }

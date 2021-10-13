@@ -7,7 +7,7 @@ import './squares-container.scss';
 export const SquaresContainer = observer(() => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const minCellSize = 3;
+  const minCellSize = 2;
   const maxCellSize = 30;
   const borderWidth = 1;
 

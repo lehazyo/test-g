@@ -34,3 +34,20 @@
 .relief-input-wrong-config {
   color: #c33;
 }
+
+@media (max-width: 800px) {
+  .relief-input-wrapper {
+    flex-direction: column;
+  }
+  .relief-input {
+    width: 100%;
+    margin: 4px 0;
+  }
+  .relief-input-config-label {
+    margin-right: 0;
+  }
+  .relief-right-most-label {
+    width: auto;
+    margin-left: 0;
+  }
+}

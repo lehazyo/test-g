@@ -2,6 +2,9 @@
   display: flex;
   flex-grow: 1;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  padding: 10px;
+  overflow: auto;
+  .squares-graph {
+    margin: 0 auto;
+  }
 }
