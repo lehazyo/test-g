@@ -79,8 +79,7 @@ export const SquaresGraph: FC<SquaresGraphProps> = ({
     window.addEventListener("resize", redrawCanvas);
 
     return () => window.removeEventListener("resize", redrawCanvas);
-    // @ts-ignore exhaustive-deps
-  }, [cellSize, widthPx, heightPx, waterSandArray]);
+  }, [cellSize, height, widthPx, heightPx, waterSandArray]);
 
   return (
     <canvas className="squares-graph" width={widthPx} height={heightPx} ref={canvasRef}></canvas>

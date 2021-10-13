@@ -43,7 +43,7 @@ export const SquaresContainer = observer(() => {
     window.addEventListener("resize", resizeDimensions);
 
     return () => window.removeEventListener("resize", resizeDimensions);
-    // @ts-ignore exhaustive-deps
+    // eslint-disable-next-line
   }, [waterSandArray]);
 
   return (
