@@ -1,11 +1,36 @@
+.relief-input-panel {
+  background-color: #eee;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
 .relief-input-wrapper {
+  display: flex;
+  align-items: center;
+  max-width: 1000px;
   width: 100%;
+  margin: auto;
   flex-shrink: 0;
   padding: 8px;
+  font-size: 18px;
 }
 
 .relief-input {
-  width: 100%;
-  font-size: 18px;
+  flex-grow: 1;
   text-align: center;
+  font-size: 18px;
+}
+
+.relief-input-config-label {
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.relief-right-most-label {
+  flex-shrink: 0;
+  margin-left: 8px;
+  width: 200px;
+}
+
+.relief-input-wrong-config {
+  color: #c33;
 }

@@ -1,38 +1,60 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
-import { nanoid } from 'nanoid';
 import { AquariumContext } from '../aquarium/aquarium';
-import { Square } from '../square/square';
-import { TerrainType } from '../../types/aquarium-types';
+import { SquaresGraph } from '../squares-graph/squares-graph';
 import './squares-container.scss';
 
 export const SquaresContainer = observer(() => {
-  const aquariumStore = useContext(AquariumContext);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const aquariumMap = aquariumStore.getAquariumMap();
-  let squares = [];
-  const height = aquariumStore.getHeight();
-  const width = aquariumStore.getWidth();
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      squares.push(<Square key={nanoid()} terrainType={aquariumMap[x][y]} />);
+  const minCellSize = 3;
+  const maxCellSize = 30;
+  const borderWidth = 1;
+
+  const [cellSize, setCellSize] = useState(maxCellSize);
+  const [wrapperWidth, setWrapperWidth] = useState(0);
+  const [wrapperHeight, setWrapperHeight] = useState(0);
+
+  const aquariumStore = useContext(AquariumContext);
+  const waterSandArray = aquariumStore.getWaterSandArray();
+
+  useEffect(() => {
+    const resizeDimensions = () => {
+      if (containerRef.current !== null) {
+        const possibleCellX = Math.floor((containerRef.current.clientWidth - 20) / aquariumStore.getWidth());
+        const possibleCellY = Math.floor((containerRef.current.clientHeight - 20) / (aquariumStore.getHeight() + 1));
+        let cellSize = Math.min(possibleCellX, possibleCellY);
+        cellSize -= borderWidth;
+
+        if (cellSize < minCellSize) {
+          cellSize = minCellSize;
+        }
+        if (cellSize > maxCellSize) {
+          cellSize = maxCellSize;
+        }
+        setCellSize(cellSize);
+        setWrapperWidth(aquariumStore.getWidth() * cellSize + aquariumStore.getWidth() * borderWidth + borderWidth);
+        setWrapperHeight((aquariumStore.getHeight() + 1) * cellSize + (aquariumStore.getHeight() + 1) * borderWidth + borderWidth);
+      }
     }
-  }
-  for (let x = 0; x < width; x++) {
-    squares.push(
-      <Square
-        terrainType={TerrainType.BASE}
-        key={nanoid()}
-      />
-    );
-  }
+
+    resizeDimensions();
+
+    window.addEventListener("resize", resizeDimensions);
+
+    return () => window.removeEventListener("resize", resizeDimensions);
+    // @ts-ignore exhaustive-deps
+  }, [waterSandArray]);
 
   return (
-    <div className="squares-container">
-      <div
-        className="squares-wrapper"
-        style={{ width: aquariumStore.getPxSize(aquariumStore.getWidth()) }}
-      >{squares}</div>
+    <div ref={containerRef} className="squares-container">
+      <SquaresGraph
+        widthPx={wrapperWidth}
+        heightPx={wrapperHeight}
+        height={aquariumStore.getHeight()}
+        cellSize={cellSize}
+        waterSandArray={waterSandArray}
+      />
     </div>
   );
 });

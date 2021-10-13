@@ -8,24 +8,22 @@ interface AquariumStoreOptions {
 }
 
 interface AquariumObservable {
-  aquariumMap: {[key: number]: TerrainType[]};
   waterCount: number;
+  configurationIsValid: boolean;
+  waterSandArray: number[][];
 }
 
 export class AquariumStore {
   private relief: number[] = [];
   private reliefHeight: number | null = null;
   private ob: AquariumObservable = observable({
-    aquariumMap: {},
     waterCount: 0,
+    configurationIsValid: false,
+    waterSandArray: [],
   });
 
-  readonly squareSize: number = 30;
-  readonly borderWidth: number = 1;
-
   constructor(options: AquariumStoreOptions) {
-    this.relief = options.initialRelief;
-    this.refreshMap();
+    this.setRelief(`[${options.initialRelief.toString()}]`);
   }
 
   getRelief(): number[] {
@@ -43,24 +41,11 @@ export class AquariumStore {
     return this.reliefHeight;
   }
 
-  getPxSize(size: number): number {
-    return size * this.squareSize - ((size - 1) * this.borderWidth);
-  }
-
-  getTerrainTypeByCoords(x: number, y: number): TerrainType {
-    const xBlock = this.ob.aquariumMap[x];
-    if (xBlock === undefined) {
-      return TerrainType.AIR;
-    }
-    const yBlock = xBlock[y];
-    if (yBlock === undefined) {
-      return TerrainType.AIR;
-    }
-    return yBlock;
-  }
-
   setRelief(relief: string): void {
     const inputIsValid = /^\[ *(\d+( *, *\d+)*) *\]$/.test(relief);
+    runInAction(() => {
+      this.ob.configurationIsValid = inputIsValid;
+    });
     if (!inputIsValid) {
       return;
     }
@@ -71,7 +56,7 @@ export class AquariumStore {
     this.relief = newRelief.map((digits) => parseInt(digits));
     this.reliefHeight = null;
 
-    this.refreshMap();
+    this.makewaterSandArray();
   }
 
   makeIndexesByHeight(): IndexesByHeight {
@@ -101,10 +86,11 @@ export class AquariumStore {
     return heightsList;
   }
 
-  makeSandWaterArray(): number[][] {
+  makewaterSandArray(): void {
     let terrainArray: number[][] = Array(this.relief.length).fill(null);
     const indexesByHeight = this.makeIndexesByHeight();
     const heightsList = this.makeSortedHeightsList(indexesByHeight);
+    let overallWater = 0;
 
     let peaksToMix: number[] = [];
 
@@ -129,7 +115,9 @@ export class AquariumStore {
       if (heightIndexes.length < 2 && height > 1) {
         peaksToMix = heightIndexes;
 
-        terrainArray[heightIndexes[0]] = [0, height];
+        if (terrainArray[heightIndexes[0]] === null) {
+          terrainArray[heightIndexes[0]] = [0, height];
+        }
         continue;
       }
 
@@ -140,48 +128,43 @@ export class AquariumStore {
         if (terrainArray[x] !== null) {
           continue;
         }
+        const currentWater = height - this.relief[x];
+        overallWater += currentWater;
+
         terrainArray[x] = [
-          height - this.relief[x],
+          currentWater,
           this.relief[x]
         ];
+
+        console.log(x, terrainArray[x]);
       }
 
       // if we matched higher peaks with lower ones, we should also check only lower peaks
       if (peaksToMix.length) {
         peaksToMix = [];
         i--;
+      } else {
+        peaksToMix = [heightIndexes[0]];
       }
     }
 
-    return terrainArray;
-  }
+    console.log(terrainArray);
 
-  refreshMap() {
-    this.ob.waterCount = 0;
     runInAction(() => {
-      this.ob.aquariumMap = this.makeSandWaterArray().map(([ waterWidth, sandWidth ]) => {
-        const terrainArray = [];
-        const airWidth = this.getHeight() - sandWidth - waterWidth;
-        if (airWidth) {
-          terrainArray.push(...Array(airWidth).fill(TerrainType.AIR));
-        }
-        if (waterWidth) {
-          this.ob.waterCount += waterWidth;
-          terrainArray.push(...Array(waterWidth).fill(TerrainType.WATER));
-        }
-        if (sandWidth) {
-          terrainArray.push(...Array(sandWidth).fill(TerrainType.SAND));
-        }
-        return terrainArray;
-      });
+      this.ob.waterCount = overallWater;
+      this.ob.waterSandArray = terrainArray;
     });
   }
 
-  getWaterCount() {
+  getWaterSandArray() {
+    return this.ob.waterSandArray;
+  }
+
+  getWaterCount(): number {
     return this.ob.waterCount;
   }
 
-  getAquariumMap() {
-    return this.ob.aquariumMap;
+  getConfigurationIsValid(): boolean {
+    return this.ob.configurationIsValid;
   }
 }
