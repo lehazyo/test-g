@@ -135,8 +135,6 @@ export class AquariumStore {
           currentWater,
           this.relief[x]
         ];
-
-        console.log(x, terrainArray[x]);
       }
 
       // if we matched higher peaks with lower ones, we should also check only lower peaks
@@ -147,8 +145,6 @@ export class AquariumStore {
         peaksToMix = [heightIndexes[0]];
       }
     }
-
-    console.log(terrainArray);
 
     runInAction(() => {
       this.ob.waterCount = overallWater;
