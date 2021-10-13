@@ -9,7 +9,7 @@ interface AquariumStoreOptions {
 interface AquariumObservable {
   waterCount: number;
   configurationIsValid: boolean;
-  waterSandArray: number[][];
+  waterCubesArray: number[][];
 }
 
 export class AquariumStore {
@@ -18,7 +18,7 @@ export class AquariumStore {
   private ob: AquariumObservable = observable({
     waterCount: 0,
     configurationIsValid: false,
-    waterSandArray: [],
+    waterCubesArray: [],
   });
 
   constructor(options: AquariumStoreOptions) {
@@ -55,7 +55,7 @@ export class AquariumStore {
     this.relief = newRelief.map((digits) => parseInt(digits));
     this.reliefHeight = null;
 
-    this.makewaterSandArray();
+    this.makeWaterCubesArray();
   }
 
   makeIndexesByHeight(): IndexesByHeight {
@@ -85,7 +85,7 @@ export class AquariumStore {
     return heightsList;
   }
 
-  makewaterSandArray(): void {
+  makeWaterCubesArray(): void {
     let terrainArray: number[][] = Array(this.relief.length).fill(null);
     const indexesByHeight = this.makeIndexesByHeight();
     const heightsList = this.makeSortedHeightsList(indexesByHeight);
@@ -147,12 +147,12 @@ export class AquariumStore {
 
     runInAction(() => {
       this.ob.waterCount = overallWater;
-      this.ob.waterSandArray = terrainArray;
+      this.ob.waterCubesArray = terrainArray;
     });
   }
 
-  getWaterSandArray() {
-    return this.ob.waterSandArray;
+  getWaterCubesArray() {
+    return this.ob.waterCubesArray;
   }
 
   getWaterCount(): number {

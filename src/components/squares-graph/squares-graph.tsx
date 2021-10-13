@@ -5,7 +5,7 @@ export interface SquaresGraphProps {
   widthPx: number;
   heightPx: number;
   cellSize: number;
-  waterSandArray: number[][];
+  waterCubesArray: number[][];
 }
 
 export const SquaresGraph: FC<SquaresGraphProps> = ({
@@ -13,7 +13,7 @@ export const SquaresGraph: FC<SquaresGraphProps> = ({
   widthPx,
   heightPx,
   cellSize,
-  waterSandArray,
+  waterCubesArray,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -27,7 +27,7 @@ export const SquaresGraph: FC<SquaresGraphProps> = ({
             "base": "#666",
             "border": "#999",
             "air": "#fff",
-            "sand": "#fd7",
+            "cube": "#fd7",
             "water": "#aaf",
           }
           const borderWidth = 1;
@@ -37,16 +37,16 @@ export const SquaresGraph: FC<SquaresGraphProps> = ({
           context.fillStyle = colors.border;
           context.fillRect(0, 0, widthPx, heightPx);
 
-          waterSandArray.forEach((xArray, xIndex) => {
+          waterCubesArray.forEach((xArray, xIndex) => {
 
             const waterCount = xArray[0];
-            const sandCount = xArray[1];
-            const airCount = height - waterCount - sandCount;
+            const cubesCount = xArray[1];
+            const airCount = height - waterCount - cubesCount;
 
-            let currentTerrainType: 'air' | 'water' | 'sand';
+            let currentTerrainType: 'air' | 'water' | 'cube';
             for (let y = 0; y < height; y++) {
               if (y + 1 > airCount + waterCount) {
-                currentTerrainType = 'sand';
+                currentTerrainType = 'cube';
               } else {
                 currentTerrainType = (y + 1 > airCount)
                   ? 'water'
@@ -79,7 +79,7 @@ export const SquaresGraph: FC<SquaresGraphProps> = ({
     window.addEventListener("resize", redrawCanvas);
 
     return () => window.removeEventListener("resize", redrawCanvas);
-  }, [cellSize, height, widthPx, heightPx, waterSandArray]);
+  }, [cellSize, height, widthPx, heightPx, waterCubesArray]);
 
   return (
     <canvas className="squares-graph" width={widthPx} height={heightPx} ref={canvasRef}></canvas>

@@ -16,7 +16,7 @@ export const SquaresContainer = observer(() => {
   const [wrapperHeight, setWrapperHeight] = useState(0);
 
   const aquariumStore = useContext(AquariumContext);
-  const waterSandArray = aquariumStore.getWaterSandArray();
+  const waterCubesArray = aquariumStore.getWaterCubesArray();
 
   useEffect(() => {
     const resizeDimensions = () => {
@@ -44,7 +44,7 @@ export const SquaresContainer = observer(() => {
 
     return () => window.removeEventListener("resize", resizeDimensions);
     // eslint-disable-next-line
-  }, [waterSandArray]);
+  }, [waterCubesArray]);
 
   return (
     <div ref={containerRef} className="squares-container">
@@ -53,7 +53,7 @@ export const SquaresContainer = observer(() => {
         heightPx={wrapperHeight}
         height={aquariumStore.getHeight()}
         cellSize={cellSize}
-        waterSandArray={waterSandArray}
+        waterCubesArray={waterCubesArray}
       />
     </div>
   );
