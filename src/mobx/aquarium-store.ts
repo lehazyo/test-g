@@ -1,5 +1,4 @@
 import { runInAction, observable } from "mobx";
-import { TerrainType } from "../types/aquarium-types";
 
 type IndexesByHeight = {[key: number]: number[]};
 
