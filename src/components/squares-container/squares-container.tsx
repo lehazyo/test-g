@@ -3,15 +3,12 @@ import { observer } from 'mobx-react';
 import { AquariumContext } from '../aquarium/aquarium';
 import { SquaresGraph } from '../squares-graph/squares-graph';
 import './squares-container.scss';
+import { canvasSizeCalc } from '../utils/canvas-size-calc';
 
 export const SquaresContainer = observer(() => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const minCellSize = 2;
-  const maxCellSize = 30;
-  const borderWidth = 1;
-
-  const [cellSize, setCellSize] = useState(maxCellSize);
+  const [cellSize, setCellSize] = useState(0);
   const [wrapperWidth, setWrapperWidth] = useState(0);
   const [wrapperHeight, setWrapperHeight] = useState(0);
 
@@ -21,20 +18,16 @@ export const SquaresContainer = observer(() => {
   useEffect(() => {
     const resizeDimensions = () => {
       if (containerRef.current !== null) {
-        const possibleCellX = Math.floor((containerRef.current.clientWidth - 20) / aquariumStore.getWidth());
-        const possibleCellY = Math.floor((containerRef.current.clientHeight - 20) / (aquariumStore.getHeight() + 1));
-        let cellSize = Math.min(possibleCellX, possibleCellY);
-        cellSize -= borderWidth;
+        const [ cellSize, canvasWidth, canvasHeight ] = canvasSizeCalc(
+          aquariumStore.getWidth(),
+          aquariumStore.getHeight(),
+          containerRef.current.clientWidth,
+          containerRef.current.clientHeight,
+        );
 
-        if (cellSize < minCellSize) {
-          cellSize = minCellSize;
-        }
-        if (cellSize > maxCellSize) {
-          cellSize = maxCellSize;
-        }
         setCellSize(cellSize);
-        setWrapperWidth(aquariumStore.getWidth() * cellSize + aquariumStore.getWidth() * borderWidth + borderWidth);
-        setWrapperHeight((aquariumStore.getHeight() + 1) * cellSize + (aquariumStore.getHeight() + 1) * borderWidth + borderWidth);
+        setWrapperWidth(canvasWidth);
+        setWrapperHeight(canvasHeight);
       }
     }
 
