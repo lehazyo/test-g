@@ -1,10 +1,9 @@
 .squares-container {
   display: flex;
   flex-grow: 1;
-  align-items: center;
   padding: 10px;
   overflow: auto;
   .squares-graph {
-    margin: 0 auto;
+    margin: auto;
   }
 }
